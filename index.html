@@ -65,6 +65,7 @@
         .evidence-zone.active-zone { display: flex !important; }
         .evidence-zone.drag-over { border: 4px dashed var(--neon-cyan) !important; background-color: rgba(102, 252, 241, 0.2) !important; }
         
+        /* 이미지 레이어 마우스 간섭 방지 */
         .evidence-bg-img { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; z-index: 1; pointer-events: none !important; user-select: none !important; }
         .zone-title { position: absolute; top: 20px; left: 20px; font-size: 18px; color: var(--neon-cyan); font-weight: bold; background: rgba(0,0,0,0.85); padding: 8px 18px; border-radius: 4px; border-left: 4px solid var(--neon-cyan); z-index: 3; pointer-events: none !important; user-select: none !important; }
 
@@ -353,13 +354,7 @@
         let currentActiveZone = null;
         let totalMoneyScore = 0;
 
-        // 🛠️ 모든 반응 후 이미지 확장자 명을 일치된 소문자 .jpeg로 최종 세팅 완료
-        const solvedImages = {
-            'zone-A': '구역1-2.jpeg',
-            'zone-B': '구역2-2.jpeg',
-            'zone-C': '구역3-2.jpeg',
-            'zone-D': '구역4-2.jpeg'
-        };
+        // 🛠️ 한글 자모음 결합 버그 우회를 위해 동적 함수로 완전히 일원화하여 구버전 맵핑 객체 완전 철거
 
         function getStageImageSrc(stageIndex, stateNumber) {
             return "zone" + (stageIndex + 1) + "-" + stateNumber + ".jpeg";
@@ -565,8 +560,9 @@
                 zone.classList.add('solved');
                 
                 const targetImg = zone.querySelector('.evidence-bg-img');
-                if (targetImg && solvedImages[currentActiveZone]) {
-                    targetImg.src = solvedImages[currentActiveZone];
+                if (targetImg) {
+                    // 🛠️ 정답 판정 즉시 반응 후(-2) 동적 영어 파일명 세팅 함수 연결 (버그 완벽 수정!)
+                    targetImg.src = getStageImageSrc(currentStageIndex, 2);
                 }
 
                 autoProgressNextStage();
